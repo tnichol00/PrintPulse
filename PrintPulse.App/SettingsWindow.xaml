@@ -1,0 +1,32 @@
+<Window x:Class="PrintPulse.SettingsWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="PrintPulse Settings" Width="450" Height="680" MinWidth="380" MinHeight="420" WindowStartupLocation="CenterScreen" Background="#F3F6FA" ShowInTaskbar="True">
+ <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel Margin="24,18">
+  <TextBlock Text="Settings" FontSize="26" FontWeight="SemiBold"/>
+  <Button Content="Open PrintPulse" Click="OpenPanelClick" HorizontalAlignment="Left" Margin="0,10,0,0"/>
+  <TextBlock Text="Bambu Lab account" FontSize="16" Margin="0,20,0,6"/>
+  <TextBlock x:Name="AccountText" Text="{Binding Account}" Foreground="#596574" TextWrapping="Wrap"/>
+  <TextBlock Text="{Binding ConnectionText}" Foreground="#596574" FontSize="12" TextWrapping="Wrap" Margin="0,5,0,8"/>
+  <StackPanel x:Name="LoginPanel">
+   <TextBlock Text="Account region"/><ComboBox x:Name="Region" SelectedIndex="0" Padding="7" Margin="0,4,0,10"><ComboBoxItem Content="Global (outside mainland China)"/><ComboBoxItem Content="Mainland China"/></ComboBox>
+   <TextBlock Text="Email"/><TextBox x:Name="Email" AutomationProperties.Name="Bambu account email"/>
+   <TextBlock x:Name="SecretLabel" Text="Password"/><PasswordBox x:Name="Secret" AutomationProperties.Name="Password or verification code"/>
+   <WrapPanel><Button x:Name="LoginButton" Content="Sign in" Click="LoginClick"/><Button x:Name="CodeButton" Content="Email me a code" Click="CodeClick"/></WrapPanel>
+   <TextBlock Text="Your password is never saved. Your session is encrypted for this Windows account." FontSize="12" Foreground="#637080" TextWrapping="Wrap" Margin="0,7"/>
+  </StackPanel>
+  <Button x:Name="SignOutButton" Content="Sign out" Click="SignOutClick" HorizontalAlignment="Left"/>
+  <TextBlock x:Name="Message" TextWrapping="Wrap" Foreground="#9D3E15" Margin="0,8"/>
+  <Separator Margin="0,12"/>
+  <CheckBox x:Name="StartupToggle" Content="Start with Windows" Click="StartupClick"/>
+  <TextBlock Text="Notifications" FontSize="16" Margin="0,13,0,3"/>
+  <CheckBox Content="When a print starts" IsChecked="{Binding Preferences.NotifyStarted}" Click="PreferenceClick"/>
+  <CheckBox Content="When a print completes" IsChecked="{Binding Preferences.NotifyCompleted}" Click="PreferenceClick"/>
+  <CheckBox Content="When a print fails" IsChecked="{Binding Preferences.NotifyFailed}" Click="PreferenceClick"/>
+  <CheckBox Content="When an active printer disconnects" IsChecked="{Binding Preferences.NotifyDisconnected}" Click="PreferenceClick"/>
+  <TextBlock Text="Visible printers" FontSize="16" Margin="0,16,0,5"/>
+  <TextBlock Text="All printers are visible by default." FontSize="12" Foreground="#637080"/>
+  <StackPanel x:Name="VisibilityList"/>
+  <Separator Margin="0,18,0,12"/>
+  <TextBlock Text="PrintPulse 1.0.0 · Windows x64" FontSize="12" Foreground="#637080"/>
+  <TextBlock Text="Independent Bambu Lab companion. Bambu Studio is not required." TextWrapping="Wrap" FontSize="12" Foreground="#637080" Margin="0,6,0,0"/>
+ </StackPanel></ScrollViewer>
+</Window>
+
