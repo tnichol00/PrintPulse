@@ -2,8 +2,6 @@
 
 PrintPulse is a Windows 11 tray companion for monitoring Bambu Lab printers. Bambu Studio does not need to be running. Every account printer gets its own card; additional cards scroll vertically. This is an independent app, not an official Bambu Lab product.
 
-**Validation status:** built and packaged for Windows x64. Thirty-two isolated regression checks pass. Real A1 telemetry and the current print preview were verified using the production monitor. The user confirmed tray toggle, click-away dismissal and context-menu operation. Correct-preview tests cover printer/task matching, rejection of unrelated or stale jobs, and removal of the previous preview on a new print. Actual Windows scaling changes, multiple monitors, native toast delivery and long-duration soak tests remain unverified. Independent grading reports describe earlier builds; the final preview fix was completed at the user's request to stop after that fix.
-
 ## Download
 
 Download `PrintPulse-win-x64.zip` from [GitHub Releases](https://github.com/tnichol00/PrintPulse/releases), extract it, and follow the instructions below.
