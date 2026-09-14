@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Input;
 using System.Windows.Shell;
+using System.Windows.Media.Imaging;
 using Forms = System.Windows.Forms;
 
 namespace PrintPulse;
@@ -14,6 +15,8 @@ public partial class FlyoutWindow : Window
     public FlyoutWindow()
     {
         InitializeComponent();
+        // Use the tray icon's largest embedded frame so the header stays sharp at every DPI.
+        HeaderIcon.Source = BitmapDecoder.Create(new Uri("pack://application:,,,/PrintPulse;component/Assets/PrintPulse.ico"), BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad).Frames.MaxBy(frame => frame.PixelWidth);
         WindowChrome.SetWindowChrome(this, new WindowChrome { CaptionHeight = 0, ResizeBorderThickness = new Thickness(0), GlassFrameThickness = new Thickness(1), CornerRadius = new CornerRadius(10) });
         SourceInitialized += (_, _) => { var value = 2; DwmSetWindowAttribute(new WindowInteropHelper(this).Handle, 33, ref value, 4); };
         Deactivated += (_, _) => { lastDismiss = DateTime.UtcNow; Hide(); };

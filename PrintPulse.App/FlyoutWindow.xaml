@@ -2,7 +2,7 @@
  <Border Background="#EDF3F9" BorderBrush="#CFD9E4" BorderThickness="1" CornerRadius="10" Padding="13">
   <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
    <Grid Margin="6,3,0,12"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Border Background="#0067C0" CornerRadius="7" Width="32" Height="32" Margin="0,0,11,0"><TextBlock Text="∿" Foreground="White" FontSize="30" HorizontalAlignment="Center" Margin="0,-6,0,0"/></Border><TextBlock Text="PrintPulse" FontSize="20" VerticalAlignment="Center"/></StackPanel>
+    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"><Image x:Name="HeaderIcon" Width="32" Height="32" Margin="0,0,11,0" RenderOptions.BitmapScalingMode="HighQuality"/><TextBlock Text="PrintPulse" FontSize="20" VerticalAlignment="Center"/></StackPanel>
     <Button Grid.Column="1" Content="↻" FontSize="20" Padding="9,0" ToolTip="Refresh" AutomationProperties.Name="Refresh" Click="RefreshClick"/>
     <Button Grid.Column="2" Content="⚙" FontSize="18" Padding="9,0" ToolTip="Settings" AutomationProperties.Name="Settings" Click="SettingsClick"/>
    </Grid>
