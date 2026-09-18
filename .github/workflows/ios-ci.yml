@@ -41,10 +41,16 @@ jobs:
             -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
             -derivedDataPath build/DerivedData -resultBundlePath build/Tests.xcresult \
             CODE_SIGNING_ALLOWED=NO clean test | tee build-output.log | xcbeautify
+      - name: Export widget test renders
+        if: always()
+        working-directory: ios
+        run: |
+          if [ -d build/Tests.xcresult ]; then
+            xcrun xcresulttool export attachments --path build/Tests.xcresult --output-path build/screenshots
+          fi
       - name: Capture settings screen
         working-directory: ios
         run: |
-          xcrun xcresulttool export attachments --path build/Tests.xcresult --output-path build/screenshots
           xcrun simctl bootstatus "$SIMULATOR_ID" -b
           xcrun simctl install "$SIMULATOR_ID" build/DerivedData/Build/Products/Debug-iphonesimulator/PrintPulse.app
           xcrun simctl launch "$SIMULATOR_ID" com.tnichol00.PrintPulse

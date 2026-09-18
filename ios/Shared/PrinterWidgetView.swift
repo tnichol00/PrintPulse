@@ -14,15 +14,15 @@ struct PrinterWidgetView: View {
     }
     var body: some View {
         if compact {
-            VStack(alignment: .leading, spacing: 5) {
-                Text(printer.name).font(.caption.weight(.semibold)).lineLimit(1)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(printer.name).font(.system(size: 11, weight: .semibold)).lineLimit(1)
                 HStack {
-                    preview.frame(width: 40, height: 40)
+                    preview.frame(width: 32, height: 32)
                     Spacer(minLength: 3)
-                    Text(printer.percentage).font(.system(size: 28, weight: .semibold, design: .rounded)).foregroundStyle(accent).minimumScaleFactor(0.65)
+                    Text(printer.percentage).font(.system(size: 26, weight: .semibold, design: .rounded)).foregroundStyle(accent).minimumScaleFactor(0.65)
                 }
                 ProgressView(value: Double(printer.progress ?? 0), total: 100).tint(accent)
-                Text(printer.jobLabel).font(.caption2).lineLimit(1)
+                Text(printer.jobLabel).font(.system(size: 10)).lineLimit(1)
                 HStack { Text(printer.state.rawValue).foregroundStyle(accent); Spacer(minLength: 2); Text(printer.timeLabel) }.font(.system(size: 10)).lineLimit(1)
                 freshness
             }
@@ -35,7 +35,7 @@ struct PrinterWidgetView: View {
                 }
                 HStack(spacing: dense ? 8 : 12) {
                     preview.frame(width: dense ? 40 : 53, height: dense ? 40 : 53)
-                    VStack(alignment: .leading, spacing: 5) {
+                    VStack(alignment: .leading, spacing: dense ? 3 : 5) {
                         HStack(alignment: .firstTextBaseline) {
                             Text(printer.percentage).font(.system(size: dense ? 22 : 27, weight: .semibold, design: .rounded))
                             Spacer(minLength: 2)

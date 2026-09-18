@@ -93,6 +93,7 @@ final class PrintPulseTests: XCTestCase {
                 let renderer = ImageRenderer(content: PrinterWidgetView(printer: printer, compact: compact).padding(12).frame(width: width + 24).background(Color.white).environment(\.colorScheme, .light))
                 renderer.scale = 2
                 let image = try XCTUnwrap(renderer.uiImage)
+                if compact { XCTAssertLessThanOrEqual(image.size.height, 128, "Small card must leave room for the widget header and margins") }
                 let attachment = XCTAttachment(image: image)
                 attachment.name = "widget-\(compact ? "small" : "medium")-\(preview ? "preview" : "placeholder")"
                 attachment.lifetime = .keepAlways; add(attachment)
