@@ -1,0 +1,73 @@
+name: iPhone app and widget checks
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["ios/**", ".github/workflows/ios-ci.yml"]
+  pull_request:
+    paths: ["ios/**", ".github/workflows/ios-ci.yml"]
+permissions:
+  contents: read
+concurrency:
+  group: printpulse-ios-checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build-and-test:
+    runs-on: macos-26
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Prepare Xcode project
+        working-directory: ios
+        run: |
+          command -v xcodegen >/dev/null || brew install xcodegen
+          xcodegen generate
+          ruby -c fastlane/Fastfile
+          ruby -c fastlane/Appfile
+      - name: Choose an available iPhone simulator
+        run: |
+          python3 - <<'PY'
+          import json, os, subprocess
+          devices = json.loads(subprocess.check_output(['xcrun', 'simctl', 'list', 'devices', 'available', '-j']))['devices']
+          phones = [d for runtime, group in devices.items() if 'iOS' in runtime for d in group if d['name'].startswith('iPhone')]
+          if not phones: raise SystemExit('No iPhone simulator installed on runner')
+          with open(os.environ['GITHUB_ENV'], 'a') as f: f.write('SIMULATOR_ID=' + phones[0]['udid'] + '\n')
+          PY
+      - name: Build and test app and widget
+        working-directory: ios
+        run: |
+          set -o pipefail
+          xcodebuild -project PrintPulse.xcodeproj -scheme PrintPulse \
+            -destination "platform=iOS Simulator,id=$SIMULATOR_ID" \
+            -derivedDataPath build/DerivedData -resultBundlePath build/Tests.xcresult \
+            CODE_SIGNING_ALLOWED=NO clean test | tee build-output.log | xcbeautify
+      - name: Capture settings screen
+        working-directory: ios
+        run: |
+          xcrun simctl install "$SIMULATOR_ID" build/DerivedData/Build/Products/Debug-iphonesimulator/PrintPulse.app
+          xcrun simctl launch "$SIMULATOR_ID" com.tnichol00.PrintPulse
+          sleep 3
+          xcrun simctl io "$SIMULATOR_ID" screenshot build/settings-screen.png
+          xcrun xcresulttool export attachments --path build/Tests.xcresult --output-path build/screenshots
+      - name: Archive iPhone app and embedded widget
+        working-directory: ios
+        run: |
+          set -o pipefail
+          xcodebuild -project PrintPulse.xcodeproj -scheme PrintPulse \
+            -destination 'generic/platform=iOS' -archivePath build/PrintPulse.xcarchive \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO archive | xcbeautify
+          test -d build/PrintPulse.xcarchive/Products/Applications/PrintPulse.app/PlugIns/PrintPulseWidget.appex
+          ditto -c -k --sequesterRsrc --keepParent build/PrintPulse.xcarchive build/PrintPulse-unsigned-archive.zip
+      - name: Save validation results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: PrintPulse-iOS-validation-${{ github.run_number }}
+          path: |
+            ios/build/Tests.xcresult
+            ios/build/settings-screen.png
+            ios/build/screenshots
+            ios/build/PrintPulse-unsigned-archive.zip
+            ios/build-output.log
+            ios/PrintPulse.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+          retention-days: 14

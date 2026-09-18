@@ -1,0 +1,45 @@
+default_platform(:ios)
+
+platform :ios do
+  desc "Sign the settings app and widget, then export Ad Hoc IPA or upload to TestFlight"
+  lane :distribute do
+    setup_ci(timeout: 0)
+    bundle_id = ENV.fetch("PRINTPULSE_BUNDLE_ID")
+    team_id = ENV.fetch("APPLE_TEAM_ID")
+    distribution = ENV.fetch("DISTRIBUTION", "testflight")
+    UI.user_error!("Unsupported distribution method") unless ["testflight", "adhoc"].include?(distribution)
+    UI.user_error!("Invalid bundle identifier") unless bundle_id.match?(/\A[A-Za-z0-9]+(?:\.[A-Za-z0-9-]+)+\z/)
+    ids = [bundle_id, "#{bundle_id}.widget"]
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("APP_STORE_CONNECT_KEY_ID"),
+      issuer_id: ENV.fetch("APP_STORE_CONNECT_ISSUER_ID"),
+      key_content: ENV.fetch("APP_STORE_CONNECT_PRIVATE_KEY"),
+      duration: 1_200, in_house: false
+    )
+    type = distribution == "adhoc" ? "adhoc" : "appstore"
+    profile_kind = distribution == "adhoc" ? "AdHoc" : "AppStore"
+    # Both registered bundle IDs must have group.<app bundle ID> enabled.
+    # No certificate revocation or changes to PiStick/Loop identifiers are performed.
+    match(type: type, app_identifier: ids, team_id: team_id, api_key: api_key,
+      git_url: ENV.fetch("MATCH_REPOSITORY_URL"),
+      git_basic_authorization: ENV.fetch("MATCH_GIT_BASIC_AUTHORIZATION"),
+      readonly: false)
+    profiles = {}
+    ["PrintPulse", "PrintPulseWidget"].zip(ids).each do |target, identifier|
+      name = "match #{profile_kind} #{identifier}"
+      profiles[identifier] = name
+      update_code_signing_settings(use_automatic_signing: false,
+        path: "PrintPulse.xcodeproj", team_id: team_id,
+        code_sign_identity: "Apple Distribution", profile_name: name, targets: [target])
+    end
+    increment_build_number(build_number: ENV.fetch("PRINTPULSE_BUILD_NUMBER", "1"), xcodeproj: "PrintPulse.xcodeproj")
+    build_app(project: "PrintPulse.xcodeproj", scheme: "PrintPulse", clean: true,
+      export_method: distribution == "adhoc" ? "ad-hoc" : "app-store",
+      output_directory: "build", output_name: "PrintPulse.ipa",
+      xcargs: "PRINTPULSE_BUNDLE_ID=#{bundle_id} DEVELOPMENT_TEAM=#{team_id}",
+      export_options: { provisioningProfiles: profiles })
+    if distribution == "testflight"
+      upload_to_testflight(api_key: api_key, ipa: "build/PrintPulse.ipa", skip_waiting_for_build_processing: true)
+    end
+  end
+end

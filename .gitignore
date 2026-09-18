@@ -4,3 +4,16 @@
 *.user
 session.bin*
 test-evidence/
+ios/*.xcodeproj/
+ios/build/
+ios/DerivedData/
+ios/App/Info.plist
+ios/App/PrintPulse.entitlements
+ios/Widget/Info.plist
+ios/Widget/PrintPulseWidget.entitlements
+ios/fastlane/report.xml
+ios/fastlane/README.md
+*.p12
+*.p8
+*.mobileprovision
+.env

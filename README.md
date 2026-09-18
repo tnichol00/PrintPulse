@@ -1,5 +1,7 @@
 # PrintPulse 1.0.0 — release candidate
 
+**iPhone version:** [Settings app and Home Screen widgets](ios/README.md). iOS builds use GitHub Actions; Apple signing and on-device validation are pending. Windows downloads are below.
+
 PrintPulse is a Windows 11 tray companion for monitoring Bambu Lab printers. Bambu Studio does not need to be running. Every account printer gets its own card; additional cards scroll vertically. This is an independent app, not an official Bambu Lab product.
 
 ## Download

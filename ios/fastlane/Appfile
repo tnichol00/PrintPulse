@@ -1,0 +1,2 @@
+app_identifier(ENV.fetch("PRINTPULSE_BUNDLE_ID", "com.tnichol00.PrintPulse"))
+team_id(ENV["APPLE_TEAM_ID"])
