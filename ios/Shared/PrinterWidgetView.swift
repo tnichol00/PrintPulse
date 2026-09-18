@@ -3,6 +3,7 @@ import SwiftUI
 struct PrinterWidgetView: View {
     let printer: PrinterSnapshot
     var compact = false
+    var dense = false
     var accent: Color {
         switch printer.state {
         case .error: return .red
@@ -26,17 +27,17 @@ struct PrinterWidgetView: View {
                 freshness
             }
         } else {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: dense ? 4 : 6) {
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
-                    Text(printer.name).font(.subheadline.weight(.semibold)).lineLimit(1)
+                    Text(printer.name).font(dense ? .caption.weight(.semibold) : .subheadline.weight(.semibold)).lineLimit(1)
                     Spacer(minLength: 0)
                     Text(printer.jobLabel).font(.caption).foregroundStyle(.secondary).lineLimit(1)
                 }
-                HStack(spacing: 12) {
-                    preview.frame(width: 53, height: 53)
+                HStack(spacing: dense ? 8 : 12) {
+                    preview.frame(width: dense ? 40 : 53, height: dense ? 40 : 53)
                     VStack(alignment: .leading, spacing: 5) {
                         HStack(alignment: .firstTextBaseline) {
-                            Text(printer.percentage).font(.system(size: 27, weight: .semibold, design: .rounded))
+                            Text(printer.percentage).font(.system(size: dense ? 22 : 27, weight: .semibold, design: .rounded))
                             Spacer(minLength: 2)
                             Text(printer.state.rawValue).font(.caption)
                         }.foregroundStyle(accent)

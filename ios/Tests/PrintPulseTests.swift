@@ -99,4 +99,21 @@ final class PrintPulseTests: XCTestCase {
             }
         }
     }
+    @MainActor func testThreePrinterLayoutFitsLargeWidget() throws {
+        var printer = PrinterSnapshot(id: "fixture", name: "Bambu Lab A1")
+        printer.apply(["subtask_name": "A long model name for the widget", "gcode_state": "RUNNING", "mc_percent": 52, "layer_num": 162, "total_layer_num": 311, "mc_remaining_time": 48])
+        let cards = VStack(spacing: 6) {
+            HStack { Image("BrandIcon").resizable().frame(width: 18, height: 18); Text("PrintPulse").font(.caption.weight(.semibold)); Spacer() }
+            ForEach(0..<3) { index in
+                PrinterWidgetView(printer: printer, dense: true)
+                if index < 2 { Divider() }
+            }
+            Text("Updates are scheduled by iOS").font(.system(size: 9)).foregroundStyle(.secondary)
+        }.frame(width: 306).padding(16).background(Color.white).environment(\.colorScheme, .light)
+        let renderer = ImageRenderer(content: cards)
+        renderer.scale = 2
+        let image = try XCTUnwrap(renderer.uiImage)
+        XCTAssertLessThanOrEqual(image.size.height, 354, "Three cards overflow the large widget")
+        let attachment = XCTAttachment(image: image); attachment.name = "widget-large-three-printers"; attachment.lifetime = .keepAlways; add(attachment)
+    }
 }

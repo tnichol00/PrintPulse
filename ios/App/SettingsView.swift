@@ -55,6 +55,11 @@ struct SettingsView: View {
                 }
                 Section("About") {
                     LabeledContent("Version", value: "1.0.0")
+                    NavigationLink("Open-source notices") {
+                        ScrollView {
+                            Text(notices).font(.footnote).frame(maxWidth: .infinity, alignment: .leading).padding()
+                        }.navigationTitle("Notices").navigationBarTitleDisplayMode(.inline)
+                    }
                     Text("An independent companion for Bambu Cloud. Your session is saved securely in the iPhone Keychain. Sign out removes local account data and widget previews.").font(.footnote).foregroundStyle(.secondary)
                 }
             }
@@ -63,5 +68,9 @@ struct SettingsView: View {
                 Button("Sign out", role: .destructive) { model.signOut() }
             }
         }.tint(Color(red: 0, green: 0.40, blue: 0.75))
+    }
+    private var notices: String {
+        guard let url = Bundle.main.url(forResource: "ThirdPartyNotices", withExtension: "txt") else { return "Dependency notices are unavailable." }
+        return (try? String(contentsOf: url, encoding: .utf8)) ?? "Dependency notices are unavailable."
     }
 }

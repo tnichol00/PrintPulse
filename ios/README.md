@@ -27,7 +27,7 @@ Automated checks cover partial telemetry updates, printer independence, task-spe
 
 ## Dependencies and references
 
-- CocoaMQTT 2.4.1 — MIT license; Swift Package Manager resolves its socket dependencies.
+- CocoaMQTT 2.4.1 — upstream LICENSE offers EPL 1.0 / EDL 1.0; used under EDL 1.0. Swift Package Manager resolves its socket dependencies. Notices ship in the app resources.
 - [Apple: keeping widgets up to date](https://developer.apple.com/documentation/widgetkit/keeping-a-widget-up-to-date)
 - [Apple: Keychain sharing](https://developer.apple.com/documentation/security/sharing-access-to-keychain-items-among-a-collection-of-apps)
 - [Fastlane: multiple-target signing](https://docs.fastlane.tools/actions/match/)

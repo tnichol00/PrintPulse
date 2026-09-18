@@ -79,7 +79,7 @@ struct PrintProvider: AppIntentTimelineProvider {
                 !storage.hiddenPrinters.contains($0.id) && (configuration.printer == nil || configuration.printer?.id == $0.id)
             }
             let message = errorMessage ?? (printers.isEmpty ? "Choose a visible printer in Settings" : snapshot?.message ?? "Open PrintPulse to refresh")
-            return PrintEntry(date: Date(), printers: printers, message: message, stale: errorMessage != nil)
+            return PrintEntry(date: Date(), printers: printers, message: message, stale: errorMessage != nil || message.contains("Last-known") || message.contains("last-known"))
         } catch {
             return PrintEntry(date: Date(), printers: [], message: "Unlock your iPhone and open PrintPulse", signedIn: false)
         }
@@ -90,7 +90,7 @@ struct PrintWidgetView: View {
     @Environment(\.widgetFamily) private var family
     var entry: PrintEntry
     var body: some View {
-        VStack(alignment: .leading, spacing: family == .systemSmall ? 5 : 10) {
+        VStack(alignment: .leading, spacing: family == .systemSmall ? 5 : 6) {
             HStack(spacing: 5) {
                 Image("BrandIcon").resizable().frame(width: 18, height: 18).clipShape(RoundedRectangle(cornerRadius: 4))
                 Text("PrintPulse").font(.caption.weight(.semibold))
@@ -107,7 +107,7 @@ struct PrintWidgetView: View {
                 Spacer(minLength: 0)
             } else {
                 ForEach(Array(entry.printers.prefix(family == .systemLarge ? 3 : 1))) { printer in
-                    PrinterWidgetView(printer: printer, compact: family == .systemSmall)
+                    PrinterWidgetView(printer: printer, compact: family == .systemSmall, dense: family == .systemLarge)
                     if family == .systemLarge && printer.id != entry.printers.prefix(3).last?.id { Divider() }
                 }
                 if family != .systemSmall {

@@ -25,7 +25,7 @@ final class TelemetrySnapshot {
                 mqtt.username = session.username
                 mqtt.password = session.token
                 mqtt.enableSSL = true
-                mqtt.allowUntrustCACertificate = false
+                mqtt.manuallyEvaluateTrust = false
                 mqtt.cleanSession = true
                 mqtt.autoReconnect = false
                 mqtt.backgroundOnSocket = false
