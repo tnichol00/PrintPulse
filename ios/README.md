@@ -19,9 +19,9 @@ The widget requests a timeline refresh after 15 minutes. iOS decides when to run
 
 `Build signed PrintPulse for iPhone` follows the PiStick build pattern: XcodeGen, Fastlane, encrypted Match signing storage, Apple API authentication, and TestFlight. It also supports exporting an Ad Hoc IPA for registered devices. Both the app and widget need signing profiles with the shared App Group. The workflow validates its signing configuration before proceeding. Signing secrets are never stored in this repository, and the workflow does not revoke existing certificates.
 
-Apple signing is connected through the dedicated `Build PrintPulse using existing Apple signing` workflow in PiStick. It checks out this private repository and uses PiStick's existing GitHub secrets. PrintPulse certificates and profiles are isolated on the `printpulse` branch of the encrypted signing repository. Exported IPAs are published only to private PrintPulse prereleases.
+Apple signing is connected through the dedicated `Build PrintPulse using existing Apple signing` workflow in PiStick. It checks out PrintPulse and uses PiStick's existing GitHub secrets. PrintPulse certificates and profiles are isolated on the `printpulse` branch of the encrypted signing repository. Unencrypted IPAs may only be published when the destination repository is private.
 
-PiStick's current GitHub token cannot create PrintPulse releases. The workflow therefore supports an optional public export certificate: the IPA is encrypted on the runner before being saved as a short-lived build artifact, and the private decryption key stays on the local PC. The decrypted IPA can then be published to this private repository using the existing local GitHub connection. Never upload an unencrypted IPA to the public PiStick repository.
+PiStick's current GitHub token cannot create PrintPulse releases. The workflow therefore supports an optional public export certificate: the IPA is encrypted on the runner before being saved as a short-lived build artifact, and the private decryption key stays on the local PC. PrintPulse is currently public, so the decrypted IPA is kept locally. Never upload an unencrypted IPA to a public repository: Ad Hoc profiles contain registered device identifiers.
 
 The shared App Group `group.com.tnichol00.PrintPulse` is registered in Apple Developer and associated with both `com.tnichol00.PrintPulse` and `com.tnichol00.PrintPulse.widget`. Signing profiles are refreshed during each distribution build to include capability changes. Ad Hoc installation requires a device included in the Apple provisioning profile. Real iPhone/widget validation remains pending. Existing Windows releases remain separate.
 
@@ -30,6 +30,8 @@ The shared App Group `group.com.tnichol00.PrintPulse` is registered in Apple Dev
 Automated checks cover partial telemetry updates, printer independence, task-specific preview selection, old-image removal, hostname restrictions, state transitions, bounds, and SwiftUI card rendering. Unit tests use isolated fixtures only; gallery examples never enter a real widget timeline. The new iOS Bambu connection, Keychain sharing, widget refresh timing, and installation still require signed-device validation.
 
 GitHub validation run `36365821884` passed all 11 tests, launched the settings screen, and archived the app with its embedded widget. Rendered small, medium, and three-printer cards were inspected; transparent preview content replaces the placeholder. The simulator validation build is unsigned, so its settings screenshot correctly reports that sign-in needs Apple signing.
+
+Signed build `36366779890` successfully exported build 4. The downloaded IPA contains both signed components and matching App Group profiles for one registered device. Physical iPhone installation and live Bambu validation remain pending.
 
 ## Dependencies and references
 
