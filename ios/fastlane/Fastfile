@@ -34,6 +34,7 @@ platform :ios do
     # No certificate revocation or changes to PiStick/Loop identifiers are performed.
     match(type: type, app_identifier: ids, team_id: team_id, api_key: api_key,
       git_url: ENV.fetch("MATCH_REPOSITORY_URL"),
+      git_branch: "printpulse",
       git_basic_authorization: ENV.fetch("MATCH_GIT_BASIC_AUTHORIZATION"),
       readonly: false)
     profiles = {}
