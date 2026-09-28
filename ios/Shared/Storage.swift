@@ -2,10 +2,11 @@ import Foundation
 import Security
 
 enum LocalError: LocalizedError {
-    case keychain, sharedContainer
+    case keychain, sharedContainer, signing
     var errorDescription: String? {
         switch self {
         case .keychain: return "Secure account storage is unavailable. Unlock your iPhone and try again."
+        case .signing: return "This build needs Apple signing before you can sign in."
         case .sharedContainer: return "Widget storage is unavailable. This build needs matching Apple App Group permissions."
         }
     }
@@ -27,6 +28,7 @@ struct SessionStore {
         var result: CFTypeRef?
         let status = SecItemCopyMatching(request as CFDictionary, &result)
         if status == errSecItemNotFound { return nil }
+        if status == errSecMissingEntitlement { throw LocalError.signing }
         guard status == errSecSuccess, let data = result as? Data,
               let session = try? JSONDecoder().decode(CloudSession.self, from: data) else { throw LocalError.keychain }
         return session
@@ -39,10 +41,12 @@ struct SessionStore {
         if status == errSecItemNotFound {
             status = SecItemAdd(query.merging(attributes) { _, new in new } as CFDictionary, nil)
         }
+        if status == errSecMissingEntitlement { throw LocalError.signing }
         guard status == errSecSuccess else { throw LocalError.keychain }
     }
     func clear() throws {
         let status = SecItemDelete(query as CFDictionary)
+        if status == errSecMissingEntitlement { throw LocalError.signing }
         guard status == errSecSuccess || status == errSecItemNotFound else { throw LocalError.keychain }
     }
 }

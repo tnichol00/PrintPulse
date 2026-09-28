@@ -21,7 +21,7 @@ struct PrinterWidgetView: View {
                     Spacer(minLength: 3)
                     Text(printer.percentage).font(.system(size: 26, weight: .semibold, design: .rounded)).foregroundStyle(accent).minimumScaleFactor(0.65)
                 }
-                ProgressView(value: Double(printer.progress ?? 0), total: 100).tint(accent)
+                progressBar
                 Text(printer.jobLabel).font(.system(size: 10)).lineLimit(1)
                 HStack { Text(printer.state.rawValue).foregroundStyle(accent); Spacer(minLength: 2); Text(printer.timeLabel) }.font(.system(size: 10)).lineLimit(1)
                 freshness
@@ -41,7 +41,7 @@ struct PrinterWidgetView: View {
                             Spacer(minLength: 2)
                             Text(printer.state.rawValue).font(.caption)
                         }.foregroundStyle(accent)
-                        ProgressView(value: Double(printer.progress ?? 0), total: 100).tint(accent)
+                        progressBar
                         HStack(spacing: 5) {
                             Text(printer.layerLabel)
                             Spacer(minLength: 0)
@@ -55,6 +55,18 @@ struct PrinterWidgetView: View {
                 freshness
             }
         }
+    }
+    private var progressBar: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                Capsule().fill(Color.secondary.opacity(0.18))
+                Capsule().fill(accent)
+                    .frame(width: geometry.size.width * CGFloat(min(100, max(0, printer.progress ?? 0))) / 100)
+            }
+        }
+        .frame(height: 4)
+        .accessibilityLabel("Print progress")
+        .accessibilityValue(printer.percentage)
     }
     @ViewBuilder private var preview: some View {
         // Mutually exclusive: a transparent real image never has the placeholder beneath it.
