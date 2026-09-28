@@ -16,6 +16,18 @@ platform :ios do
       key_content: ENV.fetch("APP_STORE_CONNECT_PRIVATE_KEY"),
       duration: 1_200, in_house: false
     )
+    # Register only PrintPulse's app and extension; never alter other apps.
+    ids.zip(["PrintPulse", "PrintPulse Widget"]).each do |identifier, name|
+      app_id = Spaceship::ConnectAPI::BundleId.find(identifier) ||
+        Spaceship::ConnectAPI::BundleId.create(name: name, platform: "IOS", identifier: identifier)
+      unless app_id.get_capabilities.any? { |capability| capability.is_type?("APP_GROUPS") }
+        app_id.create_capability("APP_GROUPS")
+      end
+    end
+    if distribution == "adhoc"
+      devices = Spaceship::ConnectAPI::Device.all(filter: { platform: "IOS", status: "ENABLED" })
+      UI.user_error!("No iPhone/iPad devices are registered with this Apple developer account. Register the destination iPhone before exporting an Ad Hoc IPA.") if devices.empty?
+    end
     type = distribution == "adhoc" ? "adhoc" : "appstore"
     profile_kind = distribution == "adhoc" ? "AdHoc" : "AppStore"
     # Both registered bundle IDs must have group.<app bundle ID> enabled.
