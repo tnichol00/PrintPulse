@@ -21,11 +21,15 @@ The widget requests a timeline refresh after 15 minutes. iOS decides when to run
 
 Apple signing is connected through the dedicated `Build PrintPulse using existing Apple signing` workflow in PiStick. It checks out this private repository and uses PiStick's existing GitHub secrets. PrintPulse certificates and profiles are isolated on the `printpulse` branch of the encrypted signing repository. Exported IPAs are published only to private PrintPulse prereleases.
 
-The first signed build is currently blocked on registering `group.com.tnichol00.PrintPulse` in Apple Developer and associating it with both `com.tnichol00.PrintPulse` and `com.tnichol00.PrintPulse.widget`. Signing profiles are refreshed during each distribution build to include capability changes. A signed IPA and real iPhone/widget validation remain pending. Existing Windows releases remain separate.
+PiStick's current GitHub token cannot create PrintPulse releases. The workflow therefore supports an optional public export certificate: the IPA is encrypted on the runner before being saved as a short-lived build artifact, and the private decryption key stays on the local PC. The decrypted IPA can then be published to this private repository using the existing local GitHub connection. Never upload an unencrypted IPA to the public PiStick repository.
+
+The shared App Group `group.com.tnichol00.PrintPulse` is registered in Apple Developer and associated with both `com.tnichol00.PrintPulse` and `com.tnichol00.PrintPulse.widget`. Signing profiles are refreshed during each distribution build to include capability changes. Ad Hoc installation requires a device included in the Apple provisioning profile. Real iPhone/widget validation remains pending. Existing Windows releases remain separate.
 
 ## Verification
 
 Automated checks cover partial telemetry updates, printer independence, task-specific preview selection, old-image removal, hostname restrictions, state transitions, bounds, and SwiftUI card rendering. Unit tests use isolated fixtures only; gallery examples never enter a real widget timeline. The new iOS Bambu connection, Keychain sharing, widget refresh timing, and installation still require signed-device validation.
+
+GitHub validation run `36365821884` passed all 11 tests, launched the settings screen, and archived the app with its embedded widget. Rendered small, medium, and three-printer cards were inspected; transparent preview content replaces the placeholder. The simulator validation build is unsigned, so its settings screenshot correctly reports that sign-in needs Apple signing.
 
 ## Dependencies and references
 
