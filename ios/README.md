@@ -19,7 +19,9 @@ The widget requests a timeline refresh after 15 minutes. iOS decides when to run
 
 `Build signed PrintPulse for iPhone` follows the PiStick build pattern: XcodeGen, Fastlane, encrypted Match signing storage, Apple API authentication, and TestFlight. It also supports exporting an Ad Hoc IPA for registered devices. Both the app and widget need signing profiles with the shared App Group. The workflow validates its signing configuration before proceeding. Signing secrets are never stored in this repository, and the workflow does not revoke existing certificates.
 
-Apple signing is not connected yet. A signed IPA and real iPhone/widget validation remain pending. Existing Windows releases remain separate.
+Apple signing is connected through the dedicated `Build PrintPulse using existing Apple signing` workflow in PiStick. It checks out this private repository and uses PiStick's existing GitHub secrets. PrintPulse certificates and profiles are isolated on the `printpulse` branch of the encrypted signing repository. Exported IPAs are published only to private PrintPulse prereleases.
+
+The first signed build is currently blocked on registering `group.com.tnichol00.PrintPulse` in Apple Developer and associating it with both `com.tnichol00.PrintPulse` and `com.tnichol00.PrintPulse.widget`. Signing profiles are refreshed during each distribution build to include capability changes. A signed IPA and real iPhone/widget validation remain pending. Existing Windows releases remain separate.
 
 ## Verification
 
